@@ -1,6 +1,9 @@
 # Elixir-crt
 
-**TODO: Add description**
+Elixir-Crt is a wrapper around the crt.sh that allows you to gather a list of subdomains
+that are on crt.sh.
+
+These can be useful for finding subdomains to probe for Bug Bounties.
 
 ## Installation
 
