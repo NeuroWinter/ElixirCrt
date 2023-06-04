@@ -1,9 +1,9 @@
-defmodule Elixir-crt.MixProject do
+defmodule ElixirCrt.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :Elixir-crt,
+      app: :ElixirCrt,
       version: "0.1.0",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
