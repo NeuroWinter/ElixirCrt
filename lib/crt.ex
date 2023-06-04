@@ -1,6 +1,6 @@
-defmodule Crt do
+defmodule Elixir-crt do
   @moduledoc """
-  Documentation for `Crt`.
+  Documentation for `Elixir-crt`.
   """
   use HTTPoison.Base
 
