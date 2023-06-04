@@ -77,10 +77,11 @@ defmodule ElixirCrt do
       end
       |> ElixirCrt.get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
       # We should make sure that the request went though.
-      if response.status_code == 200 do
+      IO.puts(response.status_code())
+      if response.status_code() == 200 do
         process_body(response.body()) 
       else
-        {:error, "There was an error connecting to https://crt.sh/ - Status Code: " <> response.status_code}
+        {:error, "There was an error connecting to https://crt.sh/ - Status Code: " <>  to_string(response.status_code())}
       end
     end
   end
