@@ -1,6 +1,6 @@
-defmodule Elixir-crt do
+defmodule ElixirCrt do
   @moduledoc """
-  Documentation for `Elixir-crt`.
+  Documentation for `ElixirCrt`.
   """
   use HTTPoison.Base
 
@@ -29,6 +29,9 @@ defmodule Elixir-crt do
     # '.' is in the list of known tlds.
     |> List.last()
     Enum.member?(get_valid_tlds(), String.upcase(tld))  
+    # TODO I want to add some more checks here to make sure there are no weird
+    # characters in the domain. One way I can do that is either regex or the URI
+    # dep.
   end
 
 
@@ -72,8 +75,13 @@ defmodule Elixir-crt do
       else
         "https://crt.sh/?q=" <> domain <> "&output=json"
       end
-      |> Crt.get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
-      process_body(response.body()) 
+      |> ElixirCrt.get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
+      # We should make sure that the request went though.
+      if response.status_code == 200 do
+        process_body(response.body()) 
+      else
+        {:error, "There was an error connecting to https://crt.sh/ - Status Code: " <> response.status_code}
+      end
     end
   end
 end
