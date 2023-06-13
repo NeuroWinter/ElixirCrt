@@ -22,7 +22,9 @@ defmodule ElixirCrt.MixProject do
   defp deps do
     [
       {:httpoison, "~> 2.0"},
-      {:poison, "~> 5.0"}
+      {:poison, "~> 5.0"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:bypass, "~> 2.1", only: :test}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
