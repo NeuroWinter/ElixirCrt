@@ -75,7 +75,7 @@ defmodule ElixirCrt do
     # We should make sure that the request went though.
     IO.puts(response.status_code())
     if response.status_code() == 200 do
-      process_body(response.body()) 
+      {:ok, process_body(response.body())}
     else
       {:error, "There was an error connecting to https://crt.sh/ - Status Code: " <>  to_string(response.status_code())}
     end
