@@ -3,6 +3,17 @@ defmodule ElixirCrt do
   Documentation for `ElixirCrt`.
   """
   use HTTPoison.Base
+  # Reading it as an attribute will prevent reading the file each time at run time.
+  # @external_resource will trigger a recompile if the file is changed.
+  @external_resource tld_file = File.read!("valid_tlds.txt")
+
+  @valid_tlds tld_file
+              |> String.split("\n", trim: true)
+
+  @spec valid_tlds() :: list
+  defp valid_tlds() do
+    @valid_tlds
+  end
 
   @spec get_headers() :: List
   defp get_headers do
@@ -20,6 +31,16 @@ defmodule ElixirCrt do
     contents
     |> String.split("\n", trim: true)
   end
+
+
+  defp ensure_valid_domain(domain) do
+    tld =
+      domain
+      |> string.split(".")
+      |> List.last()
+      |> String.upcase()
+
+    with true <- tld in valid_tlds()
 
   @spec is_valid_domain?(String) :: Boolean
   defp is_valid_domain?(domain) do
