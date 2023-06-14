@@ -67,14 +67,7 @@ defmodule ElixirCrt do
       IO.puts("Please specify a valid domain.")
       {:error, "Invalid domain."}
     else
-      response = 
-      if wildcard do
-        # To make sure that we get all of the domains we can use a wildcard
-        # on crt,sh this is a '%.' in front of the domain.
-        "https://crt.sh/?q=" <> "%." <> domain <> "&output=json" 
-      else
-        "https://crt.sh/?q=" <> domain <> "&output=json"
-      end
+      response = response_url(domain, wildcard)
       |> ElixirCrt.get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
       # We should make sure that the request went though.
       IO.puts(response.status_code())
@@ -84,5 +77,10 @@ defmodule ElixirCrt do
         {:error, "There was an error connecting to https://crt.sh/ - Status Code: " <>  to_string(response.status_code())}
       end
     end
+  end
+
+  defp response_url(domain, wildcard) do
+    wildcard = if wildcard, do: "%.", else: ""
+    "https://crt.sh/?q=#{wildcard}#{domain}&output=json"
   end
 end
