@@ -5,7 +5,7 @@ defmodule ElixirCrt do
   use HTTPoison.Base
   # Reading it as an attribute will prevent reading the file each time at run time.
   # @external_resource will trigger a recompile if the file is changed.
-  @external_resource tld_file = File.read!("valid_tlds.txt")
+  @external_resource tld_file = File.read!("lib/valid_tlds.txt")
 
   @valid_tlds tld_file
               |> String.split("\n", trim: true)
@@ -25,36 +25,21 @@ defmodule ElixirCrt do
     ]
   end
 
-  @spec get_valid_tlds() :: List
-  defp get_valid_tlds() do
-    {_status, contents} = File.read("lib/valid_tlds.txt")
-    contents
-    |> String.split("\n", trim: true)
-  end
 
-
+  @spec ensure_valid_domain(String.t()) :: :ok
   defp ensure_valid_domain(domain) do
     tld =
       domain
-      |> string.split(".")
+      |> String.split(".")
       |> List.last()
       |> String.upcase()
 
-    with true <- tld in valid_tlds()
-
-  @spec is_valid_domain?(String) :: Boolean
-  defp is_valid_domain?(domain) do
-    tld = domain
-    |> String.split(".")
-    # We need to see if the tld which should be the last item after spliting by
-    # '.' is in the list of known tlds.
-    |> List.last()
-    Enum.member?(get_valid_tlds(), String.upcase(tld))  
-    # TODO I want to add some more checks here to make sure there are no weird
-    # characters in the domain. One way I can do that is either regex or the URI
-    # dep.
+    with true <- tld in valid_tlds() do
+      :ok
+    else
+      _ -> raise "Invalid Domain"
+    end
   end
-
 
   @spec get_common_name(Map) :: String
   defp get_common_name(domain_info) do
@@ -83,20 +68,15 @@ defmodule ElixirCrt do
   """
   @spec get_subdomains(String, Boolean) :: [String.t]
   def get_subdomains(domain, wildcard \\ true) do
-    valid_domain = is_valid_domain?(domain)
-    if not valid_domain do
-      IO.puts("Please specify a valid domain.")
-      {:error, "Invalid domain."}
+    ensure_valid_domain(domain)
+    response = response_url(domain, wildcard)
+    |> ElixirCrt.get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
+    # We should make sure that the request went though.
+    IO.puts(response.status_code())
+    if response.status_code() == 200 do
+      process_body(response.body()) 
     else
-      response = response_url(domain, wildcard)
-      |> ElixirCrt.get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
-      # We should make sure that the request went though.
-      IO.puts(response.status_code())
-      if response.status_code() == 200 do
-        process_body(response.body()) 
-      else
-        {:error, "There was an error connecting to https://crt.sh/ - Status Code: " <>  to_string(response.status_code())}
-      end
+      {:error, "There was an error connecting to https://crt.sh/ - Status Code: " <>  to_string(response.status_code())}
     end
   end
 
