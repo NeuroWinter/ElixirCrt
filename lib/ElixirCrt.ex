@@ -41,7 +41,7 @@ defmodule ElixirCrt do
     end
   end
 
-  @spec get_common_name(Map) :: String
+  @spec get_common_name(map) :: String.t()
   defp get_common_name(domain_info) do
     common_name = Map.fetch!(domain_info, "common_name")
     # We want to make sure that we are removing any wildcard domains.
@@ -50,15 +50,16 @@ defmodule ElixirCrt do
     end
   end
 
-  @spec process_body(String) :: List
+  @spec process_body(String.t()) :: list
   defp process_body(body) do
     body
     |> Poison.decode!()
-    |> Enum.reduce( [], fn x, acc -> [ get_common_name(x) | acc] end)
+    |> Enum.reduce([], fn x, acc ->
+      common_name = get_common_name(x)
+      if common_name, do: [common_name | acc], else: acc
+    end)
     # Make sure that we don't have duplicates.
     |> Enum.uniq()
-    # Remove nils as the reduce function can add nils to the list.
-    |> Enum.filter(& !is_nil(&1))
   end
 
   @doc """
