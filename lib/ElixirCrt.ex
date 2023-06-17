@@ -3,12 +3,16 @@ defmodule ElixirCrt do
   Documentation for `ElixirCrt`.
   """
   use HTTPoison.Base
-  # Reading it as an attribute will prevent reading the file each time at run time.
-  # @external_resource will trigger a recompile if the file is changed.
-  @external_resource tld_file = File.read!("lib/valid_tlds.txt")
 
-  @valid_tlds tld_file
-              |> String.split("\n", trim: true)
+  # This is effectively a infinite time out, this is needed as crt.sh can take
+  # a long time to reply.
+  Req.default_options(finch_options: [receive_timeout: 10_000_000_000])
+
+  %{status: 200, body: body} = Req.get!("https://data.iana.org/TLD/tlds-alpha-by-domain.txt")
+
+  # Here we need to delete the first line of thy body as this contains a comment.
+  @valid_tlds String.split(body, "\n", trim: true)
+              |> List.delete_at(0)
 
   @spec valid_tlds() :: list
   defp valid_tlds() do
