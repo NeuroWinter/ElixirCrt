@@ -21,10 +21,9 @@ defmodule ElixirCrt.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:httpoison, "~> 2.0"},
-      {:poison, "~> 5.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:req, "~> 0.3.9"}
+      {:req, "~> 0.3.9"},
+      {:poison, "~> 5.0"}
     ]
   end
 end
