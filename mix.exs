@@ -37,7 +37,9 @@ defmodule ElixirCrt.MixProject do
     [
       name: "Crt",
       files: ["lib", "mix.exs", "README*", "LICENSE*"],
-      maintainers: ["Alex Manson"]
+      maintainers: ["Alex Manson"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/NeuroWinter/ElixirCrt"},
     ]
   end
 
