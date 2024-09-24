@@ -7,7 +7,11 @@ defmodule ElixirCrt.MixProject do
       version: "0.1.0",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      description: description(),
+      package: package(),
+      deps: deps(),
+      source_url: "https://github.com/NeuroWinter/ElixirCrt",
+      name: "ElixirCrt",
     ]
   end
 
@@ -28,4 +32,19 @@ defmodule ElixirCrt.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
   end
+
+  defp package() do
+    [
+      name: "Crt",
+      files: ["lib", "mix.exs", "README*", "LICENSE*"],
+      maintainers: ["Alex Manson"]
+    ]
+  end
+
+  defp description() do
+    """
+    A simple Elixir wrapper for the Crt.sh API, which allows you to get potentially valid subdomains for a given domain.
+    """
+  end
+
 end
