@@ -11,7 +11,6 @@ defmodule ElixirCrt.MixProject do
       package: package(),
       deps: deps(),
       source_url: "https://github.com/NeuroWinter/ElixirCrt",
-      name: "ElixirCrt",
     ]
   end
 
@@ -36,11 +35,11 @@ defmodule ElixirCrt.MixProject do
 
   defp package() do
     [
-      name: "Crt",
       files: ["lib", "mix.exs", "README*", "LICENSE*"],
       maintainers: ["Alex Manson"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/NeuroWinter/ElixirCrt"},
+      name: "crt"
     ]
   end
 
