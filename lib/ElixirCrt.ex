@@ -2,7 +2,6 @@ defmodule ElixirCrt do
   @moduledoc """
   Documentation for `ElixirCrt`.
   """
-  use HTTPoison.Base
   # Reading it as an attribute will prevent reading the file each time at run time.
   # @external_resource will trigger a recompile if the file is changed.
   @external_resource tld_file = File.read!("lib/valid_tlds.txt")
@@ -50,20 +49,9 @@ defmodule ElixirCrt do
     end
   end
 
-  @spec process_body(String.t()) :: list
-  defp process_body(body) do
-    body
-    |> Poison.decode!()
-    |> Enum.reduce([], fn x, acc ->
-      common_name = get_common_name(x)
-      if common_name, do: [common_name | acc], else: acc
-    end)
-    # Make sure that we don't have duplicates.
-    |> Enum.uniq()
-  end
 
   @doc """
-  Get all of the subdomains that are on crt.sh  
+  Get all of the subdomains that are on crt.sh
 
   Note this can take some time as the upstream server can be slow at times.
   """
@@ -71,11 +59,11 @@ defmodule ElixirCrt do
   def get_subdomains(domain, wildcard \\ true) do
     ensure_valid_domain(domain)
     response = response_url(domain, wildcard)
-    |> ElixirCrt.get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
+    |> CrtWrapper.get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
     # We should make sure that the request went though.
     IO.puts(response.status_code())
     if response.status_code() == 200 do
-      {:ok, process_body(response.body())}
+      {:ok, CrtWrapper.process_body(response.body())}
     else
       {:error, "There was an error connecting to https://crt.sh/ - Status Code: " <>  to_string(response.status_code())}
     end
