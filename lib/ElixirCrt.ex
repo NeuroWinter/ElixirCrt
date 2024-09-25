@@ -57,14 +57,13 @@ defmodule ElixirCrt do
   """
   @spec get_subdomains(String, Boolean) :: [String.t]
   def get_subdomains(domain, wildcard \\ true) do
-    import CrtWrapper, only: [get! 1, process_body: 1]
     ensure_valid_domain(domain)
     response = response_url(domain, wildcard)
-    |> get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
+    |> CrtWrapper.get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
     # We should make sure that the request went though.
     IO.puts(response.status_code())
     if response.status_code() == 200 do
-      {:ok, process_body(response.body())}
+      {:ok, CrtWrapper.process_body(response.body())}
     else
       {:error, "There was an error connecting to https://crt.sh/ - Status Code: " <>  to_string(response.status_code())}
     end
