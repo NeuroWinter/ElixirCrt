@@ -55,6 +55,11 @@ defmodule ElixirCrt do
 
   Note this can take some time as the upstream server can be slow at times.
 
+  # Arguments
+    - `domain` : String - The domain that you want to get the subdomains for. eg. "NeuroWinter.com"
+    - `wildcard` : Boolean - If you want to include wildcard domains in the search. eg *.domain.com
+    - `timeout` : Interger or :infinity  - The timeout for the request in milliseconds.
+
   ## Examples
 
       iex(2)> ElixirCrt.get_subdomains("NeuroWinter.com")
