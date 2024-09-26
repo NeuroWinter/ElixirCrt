@@ -54,16 +54,21 @@ defmodule ElixirCrt do
   Get all of the subdomains that are on crt.sh
 
   Note this can take some time as the upstream server can be slow at times.
+
+  ## Examples
+
+      iex(2)> ElixirCrt.get_subdomains("NeuroWinter.com")
+      {:ok, ["neurowinter.com", "sni.cloudflaressl.com", "mta-sts.neurowinter.com"]}
+
   """
-  @spec get_subdomains(String, Boolean) :: [String.t]
-  def get_subdomains(domain, wildcard \\ true) do
+  @spec get_subdomains(String, Boolean, Interger) :: [String.t]
+  def get_subdomains(domain, wildcard \\ true, timeout \\ :infinity ) do
     ensure_valid_domain(domain)
     response = response_url(domain, wildcard)
-    |> CrtWrapper.get!(get_headers(), [timeout: :infinity, recv_timeout: :infinity])
+    |> CrtWrapper.get!(get_headers(), [timeout: timeout, recv_timeout: timeout])
     # We should make sure that the request went though.
-    IO.puts(response.status_code())
-    if response.status_code() == 200 do
-      {:ok, CrtWrapper.process_body(response.body())}
+    if response.status_code == 200 do
+      {:ok, CrtWrapper.process_body(response.body)}
     else
       {:error, "There was an error connecting to https://crt.sh/ - Status Code: " <>  to_string(response.status_code())}
     end
